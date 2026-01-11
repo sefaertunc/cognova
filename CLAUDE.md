@@ -11,6 +11,8 @@ AITestKit is an AI-powered test development toolkit that uses Claude API to:
 
 Core principle: AI generates, human reviews and approves. AI does not self-learn; humans improve prompts based on output.
 
+**Important:** When working with the user on this project, provide guidance, suggestions, and architectural advice. The user implements code themselves - your role is to guide, not to write implementations unless explicitly requested.
+
 ## Quick Reference
 
 ```bash
@@ -97,11 +99,32 @@ chore: update anthropic dependency to 0.41.0
 - `AITESTKIT_OUTPUT_DIR` - Override output directory
 - `AITESTKIT_DEFAULT_FRAMEWORK` - Default framework (pytest/robot/playwright)
 
-## Detailed Implementation Guide
+## Project Documentation
 
-For comprehensive implementation specifications, code examples, and detailed module documentation, see:
+### Primary Specification
 
-**[docs/development/claude/SKILL.md](docs/development/claude/SKILL.md)**
+**[docs/MASTER_SPEC.md](docs/MASTER_SPEC.md)** - The single source of truth for the project.
+
+This comprehensive document includes:
+- Vision and mission statements
+- Complete architecture overview
+- Feature specifications (P0-P3 priorities)
+- Implementation plan by phase
+- Data schemas (JSON, YAML)
+- CLI reference
+- Prompt system design (CTCO framework)
+- GitHub Actions workflows
+- Testing strategy
+
+### Feature Backlog
+
+**[docs/BACKLOG.md](docs/BACKLOG.md)** - GitHub issue-style feature backlog extracted from MASTER_SPEC.md.
+
+Track implementation progress for all 27 features across 4 priority levels.
+
+### Implementation Guidance
+
+**[docs/development/claude/SKILL.md](docs/development/claude/SKILL.md)** - Detailed implementation guidance.
 
 This includes:
 - Complete class structures and method signatures

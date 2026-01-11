@@ -6,11 +6,21 @@
 
 # PROJECT IDENTITY
 
-**Name:** AITestKit  
-**Type:** CLI Tool / Python Package  
-**Purpose:** AI-powered test development toolkit using Claude API  
-**Repository:** aitestkit  
-**License:** MIT  
+**Name:** AITestKit
+**Type:** CLI Tool / Python Package
+**Purpose:** AI-powered test development toolkit using Claude API
+**Repository:** aitestkit
+**License:** MIT
+
+---
+
+# RELATED DOCUMENTATION
+
+This SKILL.md provides detailed implementation guidance for developers. For complete project context, see:
+
+- **[docs/MASTER_SPEC.md](../../MASTER_SPEC.md)** - Complete project specification (vision, architecture, features, schemas)
+- **[docs/BACKLOG.md](../../BACKLOG.md)** - Feature backlog with implementation status tracking
+- **[CLAUDE.md](../../../CLAUDE.md)** - Claude Code instructions and quick reference
 
 ---
 

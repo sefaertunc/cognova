@@ -553,8 +553,8 @@ python_frameworks = list_frameworks(language="Python")
 
 - **Registry Module**: `src/aitestkit/frameworks/registry.py`
 - **Base Interface**: `src/aitestkit/frameworks/base.py`
-- **Implementation Plan**: `docs/development/project_plan/AITestKit_MultiFramework_Update_Prompt.md`
-- **Plan File**: `~/.claude/plans/mighty-noodling-forest.md`
+- **Master Specification**: `docs/MASTER_SPEC.md` (complete project specification)
+- **Feature Backlog**: `docs/BACKLOG.md` (implementation tracking)
 
 ---
 
