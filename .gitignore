@@ -208,3 +208,6 @@ __marimo__/
 
 # Development test outputs
 dev_tests/output/
+
+# Development memory (Claude session context)
+.dev-memory/

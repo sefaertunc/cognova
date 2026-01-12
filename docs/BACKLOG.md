@@ -128,6 +128,21 @@ CI/CD automation features.
   - Trigger: Push modifying `approved.json`
   - `.github/workflows/lint-approved.yml`
 
+### Advanced Features (v1.0)
+
+- [ ] **F28: Multi-Agent Pipeline** ⬜ Not Started (Phase 3)
+  - Subagent orchestration for complex test generation
+  - Flags: `--thorough`, `--validate`, `--full`
+  - Default: Enhanced single prompt (0% extra cost)
+  - Optional: Multi-model pipelines for higher quality
+
+- [ ] **F29: Smart Memory Layer** ⬜ Not Started (Phase 4)
+  - Memvid-based vector storage for feedback patterns
+  - Semantic search across past generations
+  - Dynamic few-shot example selection
+  - Commands: `memory init`, `memory stats`, `memory search`
+  - Location: `.aitestkit/memory/`
+
 ---
 
 ## P2 - Nice-to-Have (Target: v1.2+)
@@ -170,10 +185,10 @@ Long-term roadmap.
 |----------|-------|-------------|----------------|----------------|
 | **P0**   | 9     | 2           | 4              | 3              |
 | **P1**   | 6     | 0           | 1              | 5              |
-| **P1.5** | 5     | 0           | 2              | 3              |
+| **P1.5** | 7     | 0           | 2              | 5              |
 | **P2**   | 3     | 0           | 0              | 3              |
 | **P3**   | 4     | 0           | 0              | 4              |
-| **Total**| 27    | 2           | 7              | 18             |
+| **Total**| 29    | 2           | 7              | 20             |
 
 ---
 

@@ -942,6 +942,134 @@ jobs:
 
 ---
 
+### F28: Multi-Agent Pipeline (Phase 3)
+
+**Status:** ⬜ Not Started
+**Priority:** Medium | **Complexity:** High
+
+Subagent orchestration for complex test generation scenarios.
+
+**Flags:**
+| Flag | Models Used | Cost Impact | Best For |
+|------|-------------|-------------|----------|
+| `--thorough` | Sonnet (plan) → Opus (generate) | +40% | E2E tests, complex scenarios |
+| `--validate` | Opus (generate) → Haiku (validate) | +17% | Critical tests, production code |
+| `--full` | Sonnet → Opus → Haiku | +67% | Security tests, BDD, edge cases |
+
+**Default Behavior:**
+Enhanced single prompt with internal planning outline (0% extra cost)
+
+**Architecture:**
+```
+DEFAULT (No flag):
+┌─────────────────────────────────────────────────┐
+│  Enhanced Prompt with Planning Outline          │
+│  - Internal "think first" structure             │
+│  - Single Opus call                             │
+│  - Cost: baseline (0% increase)                 │
+└─────────────────────────────────────────────────┘
+
+--thorough:
+┌─────────────┐     ┌─────────────┐
+│  Sonnet     │ ──► │   Opus      │
+│  (Plan)     │     │  (Generate) │
+└─────────────┘     └─────────────┘
+Cost: +40% (2 API calls)
+
+--validate:
+┌─────────────┐     ┌─────────────┐
+│   Opus      │ ──► │   Haiku     │
+│  (Generate) │     │  (Validate) │
+└─────────────┘     └─────────────┘
+Cost: +17% (2 API calls)
+
+--full:
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Sonnet     │ ──► │   Opus      │ ──► │   Haiku     │
+│  (Plan)     │     │  (Generate) │     │  (Validate) │
+└─────────────┘     └─────────────┘     └─────────────┘
+Cost: +67% (3 API calls)
+```
+
+**Usage Examples:**
+```bash
+# Default - enhanced single prompt
+aitestkit generate --framework pytest --scenario "user login"
+
+# For complex E2E tests
+aitestkit generate --framework playwright --scenario "checkout flow" --thorough
+
+# For production-critical tests
+aitestkit generate --framework robot --scenario "data migration" --validate
+
+# For maximum quality
+aitestkit generate --framework pytest --scenario "security audit" --full
+```
+
+---
+
+### F29: Smart Memory Layer (Phase 4)
+
+**Status:** ⬜ Not Started
+**Priority:** High | **Complexity:** Medium
+
+Memvid-based vector storage for feedback patterns and generation history.
+
+**Stores:**
+- Test generation outcomes (approved/rejected)
+- Failure patterns with corrections
+- Successful generation templates
+- User feedback and corrections
+
+**Capabilities:**
+- Semantic search across past generations
+- Dynamic few-shot example selection
+- Pattern recognition for common issues
+- Cross-project knowledge sharing (optional)
+
+**Location:** `.aitestkit/memory/`
+
+**Directory Structure:**
+```
+.aitestkit/memory/
+├── feedback.mv          # Memvid vector database
+├── patterns.mv          # Extracted patterns index
+└── exports/             # JSON fallback/export format
+    ├── approved.json
+    ├── rejected.json
+    └── patterns.json
+```
+
+**Commands:**
+```bash
+# Initialize memory (auto on first generate)
+aitestkit memory init
+
+# View statistics
+aitestkit memory stats
+
+# Export to JSON (portability)
+aitestkit memory export --output ./backup/
+
+# Rebuild from JSON
+aitestkit memory rebuild --from ./backup/
+
+# Search past generations
+aitestkit memory search "login authentication"
+```
+
+**Value Proposition:**
+
+| Feature | JSON (Static) | Memvid (Semantic) |
+|---------|---------------|-------------------|
+| Pattern matching | Keyword only | Semantic similarity |
+| Example selection | Manual curation | Dynamic, context-aware |
+| Cross-project learning | None | Automatic |
+| "Find tests like X" | Not possible | Native capability |
+| Scale | Degrades >100 entries | Scales to 10K+ |
+
+---
+
 ## 4.5 P2 - Nice-to-Have Features
 
 ### F15: Demo Workflow
