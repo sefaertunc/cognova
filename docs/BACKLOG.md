@@ -99,7 +99,7 @@ Essential features for basic functionality.
 
 ### Docker Distribution (NEW - REQUIRED)
 
-- [ ] **F35: Docker Infrastructure** ⬜ Not Started (NEW)
+- [ ] **F35: Docker Infrastructure** 🔲 Placeholder
   - Dockerfile for containerized distribution
   - Wrapper scripts (sh, bat, ps1)
   - Install script
@@ -157,7 +157,7 @@ CI/CD automation features.
   - Lint + test on push/PR
   - `.github/workflows/test.yml`
 
-- [ ] **F36: Docker Build Workflow** ⬜ Not Started (NEW)
+- [ ] **F36: Docker Build Workflow** 🔲 Placeholder
   - Build and push Docker image to GHCR
   - Trigger: Push to main, tags
   - `.github/workflows/docker.yml`
@@ -247,12 +247,12 @@ Long-term roadmap.
 
 | Priority | Total | ✅ Complete | 🔲 Placeholder | ⬜ Not Started |
 |----------|-------|-------------|----------------|----------------|
-| **P0**   | 16    | 2           | 10             | 4              |
+| **P0**   | 16    | 2           | 11             | 3              |
 | **P1**   | 6     | 0           | 3              | 3              |
-| **P1.5** | 9     | 0           | 2              | 7              |
+| **P1.5** | 9     | 0           | 3              | 6              |
 | **P2**   | 5     | 0           | 0              | 5              |
 | **P3**   | 4     | 0           | 0              | 4              |
-| **Total**| 40    | 2           | 15             | 23             |
+| **Total**| 40    | 2           | 17             | 21             |
 
 ---
 
@@ -262,17 +262,17 @@ Based on the [Implementation Plan](MASTER_SPEC.md#5-implementation-plan), the ne
 
 **Phase 2: Docker + CLI** (Current)
 
-- [ ] 2.1 Create Dockerfile
-- [ ] 2.2 Create wrapper scripts (sh, bat, ps1)
-- [ ] 2.3 Create install script
-- [ ] 2.4 Implement error handling module (`errors.py`)
-- [ ] 2.5 Implement scenario YAML loader and validator
+- [x] 2.1 Create Dockerfile (placeholder)
+- [x] 2.2 Create wrapper scripts (sh, bat, ps1) (placeholder)
+- [x] 2.3 Create install script (placeholder)
+- [x] 2.4 Create error handling module structure (`errors.py`) (placeholder)
+- [x] 2.5 Create scenario module structure (loader, validator, migrator) (placeholder)
+- [x] 2.11 Set up GitHub Actions for Docker build (placeholder)
 - [ ] 2.6 Implement `scenario init` command
 - [ ] 2.7 Implement `scenario validate` command
 - [ ] 2.8 Implement `frameworks` command
 - [ ] 2.9 Implement `info` command
 - [ ] 2.10 Implement `init` command
-- [ ] 2.11 Set up GitHub Actions for Docker build
 - [ ] 2.12 Write unit tests
 
 ---
