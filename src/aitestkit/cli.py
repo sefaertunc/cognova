@@ -1,6 +1,6 @@
 import click
 
-from aitestkit.frameworks.registry import format_framework_table
+from aitestkit.frameworks.registry import FrameworkCategory, format_framework_table, list_frameworks
 
 
 @click.group()
@@ -19,9 +19,27 @@ def info() -> None:
 
 
 @cli.command()
-@click.option("--list", "list_frameworks", is_flag=True, help="List all supported frameworks.")
-def frameworks(list_frameworks: bool) -> None:
+@click.option("--list", "list_all", is_flag=True, help="List all supported frameworks.")
+@click.option(
+    "--category",
+    "-c",
+    type=click.Choice(
+        ["unit", "bdd", "e2e", "performance", "security", "api", "mobile"], case_sensitive=False
+    ),
+    help="Filter frameworks by category.",
+)
+def frameworks(list_all: bool, category: str | None) -> None:
     """Manage supported testing frameworks."""
-    if list_frameworks:
+    if list_all:
         table = format_framework_table()
         click.echo(table)
+    elif category:
+        try:
+            category_enum = FrameworkCategory(category)
+            frameworks = list_frameworks(category_enum)
+            click.echo(f"Frameworks in category '{category}':")
+            for fw in frameworks:
+                click.echo(f" - {fw.name}")
+        except ValueError:
+            click.echo(f"Invalid category: {category}", err=True)
+            raise click.Abort() from None
