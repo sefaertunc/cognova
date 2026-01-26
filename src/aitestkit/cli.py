@@ -18,32 +18,43 @@ def info() -> None:
     click.echo(" - Model for Regression: claude-haiku-4-5-20251001")
 
 
-@cli.command()
-@click.option("--list", "list_all", is_flag=True, help="List all supported frameworks.")
+@cli.command(
+    epilog="""\b
+Examples:
+  aitestkit frameworks --list
+  aitestkit frameworks --category e2e
+  aitestkit frameworks --language Python
+  aitestkit frameworks --priority 0
+  aitestkit frameworks -c unit -l Python
+"""
+)
+@click.option("--list", "list_all", is_flag=True, help="Display all frameworks in a table format.")
 @click.option(
     "--category",
     "-c",
     type=click.Choice(
         ["unit", "bdd", "e2e", "performance", "security", "api", "mobile"], case_sensitive=False
     ),
-    help="Filter frameworks by category.",
+    show_choices=False,
+    metavar="CATEGORY",
+    help="Filter by category (unit, bdd, e2e, performance, security, api, mobile).",
 )
 @click.option(
     "--language",
     "-l",
     type=str,
-    help="Filter frameworks by programming language.",
+    help="Filter by language (e.g., Python, TypeScript, Java, JavaScript).",
 )
 @click.option(
     "--priority",
     "-p",
     type=int,
-    help="Filter frameworks by priority level.",
+    help="Filter by priority: 0 (Core), 1 (Standard), 2 (Extended).",
 )
 def frameworks(
     list_all: bool, category: str | None, language: str | None, priority: int | None
 ) -> None:
-    """Manage supported testing frameworks."""
+    """List and filter supported testing frameworks."""
     if list_all:
         table = format_framework_table()
         click.echo(table)
