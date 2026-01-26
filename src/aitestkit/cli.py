@@ -34,11 +34,31 @@ def info() -> None:
     type=str,
     help="Filter frameworks by programming language.",
 )
-def frameworks(list_all: bool, category: str | None, language: str | None) -> None:
+@click.option(
+    "--priority",
+    "-p",
+    type=int,
+    help="Filter frameworks by priority level.",
+)
+def frameworks(
+    list_all: bool, category: str | None, language: str | None, priority: int | None
+) -> None:
     """Manage supported testing frameworks."""
     if list_all:
         table = format_framework_table()
         click.echo(table)
+    elif category and language and priority is not None:
+        frameworks = list_frameworks(
+            category=FrameworkCategory(category) if category else None,
+            language=language,
+            priority=priority,
+        )
+        if not frameworks:
+            click.echo("No frameworks found with the specified filters.", err=True)
+            raise SystemExit(2)
+        click.echo("Filtered Frameworks:")
+        for fw in frameworks:
+            click.echo(f" - {fw.name}")
     elif category:
         try:
             category_enum = FrameworkCategory(category)
@@ -55,5 +75,16 @@ def frameworks(list_all: bool, category: str | None, language: str | None) -> No
             click.echo(f"No frameworks found for language: {language}", err=True)
             raise SystemExit(2)
         click.echo(f"Frameworks for language '{language}':")
+        for fw in frameworks:
+            click.echo(f" - {fw.name}")
+    elif priority is not None:
+        if priority < 0 or priority > 2:
+            click.echo(f"Invalid priority level: {priority}. Must be between 0 and 2.", err=True)
+            raise SystemExit(2)
+        frameworks = list_frameworks(priority=priority)
+        if not frameworks:
+            click.echo(f"No frameworks found for priority level: {priority}", err=True)
+            raise SystemExit(2)
+        click.echo(f"Frameworks with priority level '{priority}':")
         for fw in frameworks:
             click.echo(f" - {fw.name}")
