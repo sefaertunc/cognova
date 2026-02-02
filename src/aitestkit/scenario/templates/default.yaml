@@ -93,6 +93,38 @@ test_data:
 #   - docs/business_rules.md
 
 # =============================================================================
+# ATTACHMENTS (OPTIONAL)
+# Attach files for richer context during test generation
+# Supported types: image, document, text, code, openapi, url
+# See: aitestkit info --attachments for full list of supported extensions
+# =============================================================================
+# attachments:
+#   # Source code to generate tests for
+#   - path: ./src/login_handler.py
+#     type: code
+#     description: Login handler implementation
+#
+#   # C# example
+#   - path: ./src/AuthService.cs
+#     type: code
+#     description: Authentication service
+#
+#   # Screenshot for visual context
+#   - path: ./docs/login_screenshot.png
+#     type: image
+#     description: Login form screenshot
+#
+#   # Requirements document
+#   - path: ./docs/requirements.pdf
+#     type: document
+#     description: Feature requirements
+#
+#   # API specification
+#   - path: ./api/openapi.yaml
+#     type: openapi
+#     description: REST API specification
+
+# =============================================================================
 # OVERRIDES (OPTIONAL)
 # Override project defaults for this specific scenario
 # =============================================================================
