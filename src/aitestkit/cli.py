@@ -1,6 +1,24 @@
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+
 import click
 
+from aitestkit.config import (
+    HAIKU_MODEL,
+    OPUS_MODEL,
+    SONNET_MODEL,
+    get_settings,
+    load_project_config,
+)
 from aitestkit.frameworks.registry import FrameworkCategory, format_framework_table, list_frameworks
+
+
+def get_version() -> str:
+    """Get package version from metadata."""
+    try:
+        return version("aitestkit")
+    except PackageNotFoundError:
+        return "dev"
 
 
 @click.group()
@@ -11,11 +29,52 @@ def cli() -> None:
 
 @cli.command()
 def info() -> None:
-    """Display current configuration settings."""
-    click.echo("Current configuration settings:")
-    click.echo(" - Model for Code Generation: claude-opus-4-5-20251101")
-    click.echo(" - Model for Analysis: claude-sonnet-4-5-20250929")
-    click.echo(" - Model for Regression: claude-haiku-4-5-20251001")
+    """Display current configuration and environment status."""
+    click.echo(f"AITestKit v{get_version()}\n")
+
+    click.echo("Environment:")
+
+    try:
+        settings = get_settings()
+        api_status = "Configured"
+    except Exception:
+        settings = None
+        api_status = "Not configured (set ANTHROPIC_API_KEY)"
+
+    click.echo(f"  API Key:        {api_status}")
+    click.echo(f"  Working Dir:    {Path.cwd()}")
+
+    project_config = load_project_config()
+    if project_config:
+        click.echo("  Project Config: Found (.aitestkit/project.yaml)")
+    else:
+        click.echo("  Project Config: Not found")
+
+    click.echo("\nModels:")
+    if settings:
+        click.echo(f"  Code Generation: {settings.model_code_gen}")
+        click.echo(f"  Analysis:        {settings.model_analysis}")
+        click.echo(f"  Regression:      {settings.model_regression}")
+    else:
+        click.echo(f"  Code Generation: {OPUS_MODEL} (default)")
+        click.echo(f"  Analysis:        {SONNET_MODEL} (default)")
+        click.echo(f"  Regression:      {HAIKU_MODEL} (default)")
+
+    click.echo("\nSettings:")
+    if settings:
+        click.echo(f"  Default Framework: {settings.default_framework}")
+        click.echo(f"  Output Directory:  {settings.output_dir}")
+        click.echo(f"  Max Tokens:        {settings.max_tokens}")
+        click.echo(f"  Temperature:       {settings.temperature}")
+    else:
+        click.echo("  (using defaults - API key not configured)")
+
+    if project_config:
+        click.echo("\nProject:")
+        click.echo(f"  Name:       {project_config.product.name}")
+        click.echo(f"  Type:       {project_config.product.type}")
+        if project_config.product.tech_stack:
+            click.echo(f"  Tech Stack: {', '.join(project_config.product.tech_stack)}")
 
 
 @cli.command(
@@ -99,3 +158,8 @@ def frameworks(
         click.echo(f"Frameworks with priority level '{priority}':")
         for fw in frameworks:
             click.echo(f" - {fw.name}")
+
+
+def main() -> None:
+    """Entry point for the CLI."""
+    cli()
