@@ -40,6 +40,13 @@ def _create_project_structure(base_dir: Path) -> None:
         file_path = base_dir / file
         file_path.touch()
 
+def _create_scenario_file(base_dir: Path, filename: str) -> None:
+    base_dir.mkdir(parents=True, exist_ok=True)
+    template_path = Path(__file__).parent / "scenario" / "templates" / "default.yaml"
+    template_content = template_path.read_text()
+    scenario_file = base_dir / filename
+    scenario_file.write_text(template_content)
+
 
 @click.group()
 def cli() -> None:
@@ -95,7 +102,6 @@ def info() -> None:
         click.echo(f"  Type:       {project_config.product.type}")
         if project_config.product.tech_stack:
             click.echo(f"  Tech Stack: {', '.join(project_config.product.tech_stack)}")
-
 
 @cli.command(
     epilog="""\b
@@ -186,7 +192,7 @@ Examples:
     aitestkit init --force
     """
 )
-@click.option("--force", is_flag=True, help="Overwrite existing project directory.")
+@click.option("--force", is_flag=True, help="Overwrites existing project directory.")
 def init(force:bool) -> None:
     current_dir = Path.cwd()
     if not force:
@@ -200,7 +206,27 @@ def init(force:bool) -> None:
         _create_project_structure(current_dir)
     click.echo("AITestKit project initialized successfully.")
 
+@cli.group()
+def scenario():
+    """Manage scenario files."""
+    pass
 
+@scenario.command(name="init")
+@click.argument("filename")
+@click.option("--force", is_flag=True, help="Overwrites existing scenario file.")
+def scenario_init(filename:str, force:bool) -> None:
+    current_dir = Path.cwd()
+    scenarios_dir = current_dir / "scenarios"
+    scenario_file = scenarios_dir / filename
+    if not force:
+        if scenario_file.exists():
+            click.echo("File already exists.")
+            raise SystemExit(2)
+        else:
+            _create_scenario_file(scenarios_dir, filename)
+    else:
+        _create_scenario_file(scenarios_dir, filename)
+    click.echo("Scenario file is created successfully.")
 
 def main() -> None:
     """Entry point for the CLI."""
