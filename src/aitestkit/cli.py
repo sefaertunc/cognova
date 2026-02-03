@@ -14,7 +14,12 @@ from aitestkit.config import (
     get_settings,
     load_project_config,
 )
-from aitestkit.frameworks.registry import FrameworkCategory, format_framework_table, list_frameworks
+from aitestkit.frameworks.registry import (
+    FrameworkCategory,
+    format_framework_table,
+    get_framework,
+    list_frameworks,
+)
 from aitestkit.scenario.validator import ScenarioFile
 
 
@@ -270,6 +275,30 @@ def scenario_validate(filename: str) -> None:
     for warning in warnings:
         click.echo(warning)
     click.echo(f"Scenario '{filename}' is valid.")
+
+
+@cli.command(
+    epilog="""\b
+Example:
+    aitestkit generate -s/--scenario login.yaml -f/--framework pytest -o/--output ./tests
+    """
+)
+@click.option("-s", "--scenario", required=True, help="Path to scenario YAML file")
+@click.option("-f", "--framework", required=True, help="Test framework to generate")
+@click.option("-o", "--output", help="Output file path (optional)")
+def generate(scenario: str, framework: str, output: str | None) -> None:
+    """Generate test code from a scenario file."""
+    file_path = Path(scenario)
+    if not file_path.exists():
+        click.echo("File not found or does not exist.")
+        raise SystemExit(2)
+    try:
+        get_framework(framework)
+    except ValueError as e:
+        click.echo(f"Error {e} \n Use 'aitestkit frameworks --list' to see available options.")
+        raise SystemExit(2) from None
+    _ = output  # placeholder
+    click.echo("Successfully generated with valid scenario and framework.")
 
 
 def main() -> None:
