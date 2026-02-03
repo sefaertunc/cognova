@@ -1,27 +1,25 @@
-"""
-Scenario validation logic.
+from typing import Any
 
-Validates scenario YAML files against the schema and provides
-detailed feedback about required, recommended, and optional fields.
+from pydantic import BaseModel, Field
 
-Constants:
-- CURRENT_SCHEMA_VERSION = 1
-- DEPRECATED_VERSIONS: list[int]
-- UNSUPPORTED_VERSIONS: list[int]
 
-Classes:
-- ValidationResult: Dataclass with is_valid, errors, warnings, info
+class TargetConfig(BaseModel):
+    feature: str
+    description: str = Field(min_length=20)
+    component: str | None = None
+    source_files: list[str] | None = None
 
-Functions:
-- validate_scenario(path, console) -> ValidationResult
-- check_schema_version(data, file, console) -> None
 
-Validation Tiers (see MASTER_SPEC.md Section 9.4):
-- Required: target.feature, target.description (20+ chars), scenarios.success, scenarios.failure
-- Recommended: target.source_files, test_data, scenarios.edge_cases
-- Optional: context, framework, output, component
+class ScenariosConfig(BaseModel):
+    success: list[str]
+    failure: list[str]
+    edge_cases: list[str] | None = None
 
-TODO: Implement validator
-"""
 
-# Placeholder - implementation to follow
+class ScenarioFile(BaseModel):
+    schema_version: int = 1
+    target: TargetConfig
+    scenarios: ScenariosConfig
+    test_data: dict[str, Any] | None = None
+    context: list[str] | None = None
+    attachments: list[dict[str, Any]] | None = None

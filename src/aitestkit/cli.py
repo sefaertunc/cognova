@@ -4,6 +4,8 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 import click
+import yaml
+from pydantic import ValidationError
 
 from aitestkit.config import (
     HAIKU_MODEL,
@@ -13,6 +15,7 @@ from aitestkit.config import (
     load_project_config,
 )
 from aitestkit.frameworks.registry import FrameworkCategory, format_framework_table, list_frameworks
+from aitestkit.scenario.validator import ScenarioFile
 
 
 def get_version() -> str:
@@ -22,23 +25,29 @@ def get_version() -> str:
     except PackageNotFoundError:
         return "dev"
 
+
 def _create_project_structure(base_dir: Path) -> None:
     folders = [".aitestkit", ".aitestkit/feedback", ".aitestkit/history"]
-    json_files = [".aitestkit/history/generations.json", ".aitestkit/feedback/pending.json",
-             ".aitestkit/feedback/approved.json", ".aitestkit/feedback/rejected.json",
-             ".aitestkit/feedback/patterns.json"]
-    yaml_files = [ ".aitestkit/config.yaml"]
+    json_files = [
+        ".aitestkit/history/generations.json",
+        ".aitestkit/feedback/pending.json",
+        ".aitestkit/feedback/approved.json",
+        ".aitestkit/feedback/rejected.json",
+        ".aitestkit/feedback/patterns.json",
+    ]
+    yaml_files = [".aitestkit/config.yaml"]
     for folder in folders:
         folder_path = base_dir / folder
-        folder_path.mkdir(exist_ok=True ,parents=True)
+        folder_path.mkdir(exist_ok=True, parents=True)
     for file in json_files:
         file_path = base_dir / file
         file_path.touch()
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             json.dump({}, f, indent=4)
     for file in yaml_files:
         file_path = base_dir / file
         file_path.touch()
+
 
 def _create_scenario_file(base_dir: Path, filename: str) -> None:
     base_dir.mkdir(parents=True, exist_ok=True)
@@ -102,6 +111,7 @@ def info() -> None:
         click.echo(f"  Type:       {project_config.product.type}")
         if project_config.product.tech_stack:
             click.echo(f"  Tech Stack: {', '.join(project_config.product.tech_stack)}")
+
 
 @cli.command(
     epilog="""\b
@@ -185,6 +195,7 @@ def frameworks(
         for fw in frameworks:
             click.echo(f" - {fw.name}")
 
+
 @cli.command(
     epilog="""\b
 Examples:
@@ -193,7 +204,7 @@ Examples:
     """
 )
 @click.option("--force", is_flag=True, help="Overwrites existing project directory.")
-def init(force:bool) -> None:
+def init(force: bool) -> None:
     current_dir = Path.cwd()
     if not force:
         if (current_dir / ".aitestkit").is_dir():
@@ -206,15 +217,17 @@ def init(force:bool) -> None:
         _create_project_structure(current_dir)
     click.echo("AITestKit project initialized successfully.")
 
+
 @cli.group()
-def scenario():
+def scenario() -> None:
     """Manage scenario files."""
     pass
+
 
 @scenario.command(name="init")
 @click.argument("filename")
 @click.option("--force", is_flag=True, help="Overwrites existing scenario file.")
-def scenario_init(filename:str, force:bool) -> None:
+def scenario_init(filename: str, force: bool) -> None:
     current_dir = Path.cwd()
     scenarios_dir = current_dir / "scenarios"
     scenario_file = scenarios_dir / filename
@@ -227,6 +240,37 @@ def scenario_init(filename:str, force:bool) -> None:
     else:
         _create_scenario_file(scenarios_dir, filename)
     click.echo("Scenario file is created successfully.")
+
+
+@scenario.command(name="validate")
+@click.argument("filename")
+def scenario_validate(filename: str) -> None:
+    """Validate a scenario YAML file."""
+    file_path = Path(filename)
+    if not file_path.exists():
+        click.echo("File not found")
+        raise SystemExit(2)
+    try:
+        data = yaml.safe_load(file_path.read_text())
+    except yaml.YAMLError as e:
+        click.echo(f"Error: Malformed YAML: {e}")
+        raise SystemExit(2) from None
+    try:
+        scenario = ScenarioFile(**data)
+    except ValidationError as e:
+        click.echo(f"Error: invalid scenario:\n{e}")
+        raise SystemExit(2) from None
+    warnings = []
+    if scenario.target.source_files is None:
+        warnings.append("Warning: Missing recommended field 'source_files'")
+    if scenario.test_data is None:
+        warnings.append("Warning: Missing recommended field 'test_data'")
+    if scenario.scenarios.edge_cases is None:
+        warnings.append("Warning: Missing recommended field 'edge_cases'")
+    for warning in warnings:
+        click.echo(warning)
+    click.echo(f"Scenario '{filename}' is valid.")
+
 
 def main() -> None:
     """Entry point for the CLI."""
