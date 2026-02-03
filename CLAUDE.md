@@ -147,6 +147,8 @@ test(regression): add benchmark scenarios for auth flows
 chore: update anthropic dependency to 0.41.0
 ```
 
+**Note:** Do not add `Co-Authored-By` lines to commit messages.
+
 ## Environment Variables
 
 - `ANTHROPIC_API_KEY` - Required for Claude API access
