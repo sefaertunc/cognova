@@ -1,3 +1,5 @@
+import json
+import shutil
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
@@ -19,6 +21,24 @@ def get_version() -> str:
         return version("aitestkit")
     except PackageNotFoundError:
         return "dev"
+
+def _create_project_structure(base_dir: Path) -> None:
+    folders = [".aitestkit", ".aitestkit/feedback", ".aitestkit/history"]
+    json_files = [".aitestkit/history/generations.json", ".aitestkit/feedback/pending.json",
+             ".aitestkit/feedback/approved.json", ".aitestkit/feedback/rejected.json",
+             ".aitestkit/feedback/patterns.json"]
+    yaml_files = [ ".aitestkit/config.yaml"]
+    for folder in folders:
+        folder_path = base_dir / folder
+        folder_path.mkdir(exist_ok=True ,parents=True)
+    for file in json_files:
+        file_path = base_dir / file
+        file_path.touch()
+        with open(file_path, 'w') as f:
+            json.dump({}, f, indent=4)
+    for file in yaml_files:
+        file_path = base_dir / file
+        file_path.touch()
 
 
 @click.group()
@@ -158,6 +178,28 @@ def frameworks(
         click.echo(f"Frameworks with priority level '{priority}':")
         for fw in frameworks:
             click.echo(f" - {fw.name}")
+
+@cli.command(
+    epilog="""\b
+Examples:
+    aitestkit init
+    aitestkit init --force
+    """
+)
+@click.option("--force", is_flag=True, help="Overwrite existing project directory.")
+def init(force:bool) -> None:
+    current_dir = Path.cwd()
+    if not force:
+        if (current_dir / ".aitestkit").is_dir():
+            click.echo("The project already exists.")
+            raise SystemExit(2)
+        else:
+            _create_project_structure(current_dir)
+    else:
+        shutil.rmtree(current_dir / ".aitestkit")
+        _create_project_structure(current_dir)
+    click.echo("AITestKit project initialized successfully.")
+
 
 
 def main() -> None:
