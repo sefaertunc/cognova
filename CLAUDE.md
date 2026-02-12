@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 
-AITestKit is an MCP server for IDE integration that uses Claude API to:
+Cognova is an MCP server for IDE integration that uses Claude API to:
 - **Generate test code** from YAML scenarios (Sonnet 4.5 standard / Opus 4.6 high quality)
 - **Analyze test failures** and suggest fixes (Sonnet 4.5)
 - **Validate generated code** through deterministic rules + LLM-as-Judge (Haiku 4.5)
@@ -22,9 +22,9 @@ Learning loop: auto-fix → constraint injection at threshold 2 → MAPS rule in
 ```json
 {
   "mcpServers": {
-    "AITestKit": {
+    "Cognova": {
       "command": "uvx",
-      "args": ["aitestkit-mcp@latest"],
+      "args": ["cognova-mcp@latest"],
       "env": { "ANTHROPIC_API_KEY": "sk-ant-..." }
     }
   }
@@ -42,7 +42,7 @@ mypy src/
 ## Architecture
 
 ```
-src/aitestkit/
+src/cognova/
 ├── mcp_server.py              # FastMCP entry point (12 tools)
 ├── config.py                  # Pydantic configuration
 ├── errors.py                  # Error definitions

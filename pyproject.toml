@@ -1,5 +1,5 @@
 [project]
-name = "aitestkit-mcp"
+name = "cognova-mcp"
 version = "4.0.0"
 description = "AI-Powered Test Generation MCP Server for IDE Integration"
 readme = "README.md"
@@ -83,18 +83,18 @@ validators = [
 
 # All optional dependencies
 all = [
-    "aitestkit-mcp[dev]",
-    "aitestkit-mcp[validators]",
+    "cognova-mcp[dev]",
+    "cognova-mcp[validators]",
 ]
 
 [project.scripts]
-aitestkit-mcp = "aitestkit.mcp_server:main"
+cognova-mcp = "cognova.mcp_server:main"
 
 [project.urls]
-Homepage = "https://github.com/sefaertunc/aitestkit"
-Documentation = "https://github.com/sefaertunc/aitestkit#readme"
-Repository = "https://github.com/sefaertunc/aitestkit"
-Issues = "https://github.com/sefaertunc/aitestkit/issues"
+Homepage = "https://github.com/sefaertunc/cognova"
+Documentation = "https://github.com/sefaertunc/cognova#readme"
+Repository = "https://github.com/sefaertunc/cognova"
+Issues = "https://github.com/sefaertunc/cognova/issues"
 
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
@@ -104,7 +104,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-aitestkit = [
+cognova = [
     "prompts/**/*.md",
     "prompts/**/*.yaml",
     "scenario/templates/*.yaml",
@@ -135,7 +135,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["aitestkit"]
+known-first-party = ["cognova"]
 
 # Black configuration
 [tool.black]
@@ -194,7 +194,7 @@ filterwarnings = [
 
 # Coverage configuration
 [tool.coverage.run]
-source = ["src/aitestkit"]
+source = ["src/cognova"]
 branch = true
 omit = [
     "*/.dev-tests/*",

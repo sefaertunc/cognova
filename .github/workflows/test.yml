@@ -1,4 +1,4 @@
-# Runs AITestKit's own test suite on push/PR
+# Runs Cognova's own test suite on push/PR
 # Create tests/ from .dev-tests/ before enabling this
 name: Tests
 on:

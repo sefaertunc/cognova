@@ -1,0 +1,135 @@
+# Cognova Scenario Template
+# ============================
+#
+# This file defines a test scenario for Cognova to generate test code.
+# Ask your IDE agent: "Generate tests from this scenario using pytest"
+#
+# Schema version - do not modify
+schema_version: 1
+
+# =============================================================================
+# TARGET (REQUIRED)
+# Define what feature/component you're testing
+# =============================================================================
+target:
+  # Name of the feature being tested (e.g., "User Login", "Shopping Cart")
+  feature: "Feature Name Here"
+
+  # Optional: Component identifier for organization
+  component: "auth"  # e.g., auth, api, payment, user
+
+  # Detailed description of what to test (minimum 20 characters)
+  # Be specific about the functionality, inputs, and expected behavior
+  description: |
+    Describe the feature you want to test in detail.
+    Include:
+    - What the feature does
+    - Expected inputs and outputs
+    - Business rules and constraints
+    - Any authentication/authorization requirements
+
+  # Optional but RECOMMENDED: Source files to reference
+  # AI can use these to understand actual implementation details
+  source_files:
+    - src/path/to/implementation.py
+    - src/path/to/related_module.py
+
+# =============================================================================
+# SCENARIOS (REQUIRED)
+# Define specific test cases to generate
+# =============================================================================
+scenarios:
+  # Success scenarios - cases that should pass (at least 1 required)
+  success:
+    - "Valid input returns expected result"
+    - "Correct data is persisted to database"
+    - "Proper response format is returned"
+
+  # Failure scenarios - cases that should fail gracefully (at least 1 required)
+  failure:
+    - "Invalid input returns appropriate error"
+    - "Unauthorized access returns 401/403"
+    - "Missing required fields are rejected"
+
+  # Edge cases (optional but RECOMMENDED)
+  # Consider: boundary values, concurrency, timeouts, empty inputs
+  edge_cases:
+    - "Empty string input handling"
+    - "Maximum length input handling"
+    - "Concurrent access handling"
+    - "Timeout scenarios"
+    - "Special character handling"
+
+# =============================================================================
+# TEST DATA (OPTIONAL but RECOMMENDED)
+# Define reusable test fixtures
+# =============================================================================
+test_data:
+  # Valid test data examples
+  valid_example:
+    field1: "valid_value"
+    field2: 123
+    field3: true
+
+  # Invalid test data for failure scenarios
+  invalid_example:
+    field1: ""  # Empty value
+    field2: -1  # Invalid number
+
+  # Edge case data
+  edge_case_example:
+    field1: "a" * 1000  # Very long string
+
+# =============================================================================
+# CONTEXT (OPTIONAL)
+# Additional files to include for more context
+# =============================================================================
+# context:
+#   - docs/api_spec.md
+#   - docs/business_rules.md
+
+# =============================================================================
+# ATTACHMENTS (OPTIONAL)
+# Attach files for richer context during test generation
+# Supported types: image, document, text, code, openapi, url
+# =============================================================================
+# attachments:
+#   # Source code to generate tests for
+#   - path: ./src/login_handler.py
+#     type: code
+#     description: Login handler implementation
+#
+#   # C# example
+#   - path: ./src/AuthService.cs
+#     type: code
+#     description: Authentication service
+#
+#   # Screenshot for visual context
+#   - path: ./docs/login_screenshot.png
+#     type: image
+#     description: Login form screenshot
+#
+#   # Requirements document
+#   - path: ./docs/requirements.pdf
+#     type: document
+#     description: Feature requirements
+#
+#   # API specification
+#   - path: ./api/openapi.yaml
+#     type: openapi
+#     description: REST API specification
+
+# =============================================================================
+# GENERATION OPTIONS (OPTIONAL)
+# Override project defaults for this scenario
+# =============================================================================
+# quality: "standard"         # "standard" (Sonnet) or "high" (Opus)
+# edge_cases: false           # Generate edge-case focused tests separately
+# fault_analysis: false       # Generate fault-guided tests (ACH pattern)
+
+# =============================================================================
+# OVERRIDES (OPTIONAL)
+# Override project defaults for this specific scenario
+# =============================================================================
+# framework: pytest  # Default from config.yaml
+# output: tests/specific/test_feature.py  # Default from config.yaml

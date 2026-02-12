@@ -1,4 +1,4 @@
-# AITestKit
+# Cognova
 
 AI-powered test generation toolkit — MCP server for IDE integration.
 
@@ -16,16 +16,16 @@ Add to your IDE's MCP config:
 ```json
 {
   "mcpServers": {
-    "AITestKit": {
+    "Cognova": {
       "command": "uvx",
-      "args": ["aitestkit-mcp@latest"],
+      "args": ["cognova-mcp@latest"],
       "env": { "ANTHROPIC_API_KEY": "sk-ant-..." }
     }
   }
 }
 ```
 
-Then ask your IDE agent: "Initialize AITestKit for this project"
+Then ask your IDE agent: "Initialize Cognova for this project"
 
 ## Requirements
 
