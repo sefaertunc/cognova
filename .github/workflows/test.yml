@@ -1,30 +1,29 @@
-# CI Workflow: Lint + Test
-# TODO: Implement full workflow based on MASTER_SPEC.md Section 5.6
-#
-# Required jobs:
-# - lint: ruff check, mypy
-# - test: pytest with coverage
-# - Matrix: Python 3.11, 3.12
-#
-# Triggers: push to main, pull_request
-
-name: Test
-
+# Runs AITestKit's own test suite on push/PR
+# Create tests/ from .dev-tests/ before enabling this
+name: Tests
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
     branches: [main]
-
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # TODO: Add ruff and mypy steps
-
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -e ".[dev]"
+      - run: ruff check src/
+      - run: mypy src/
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
-      # TODO: Add pytest with coverage
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - run: pip install -e ".[dev]"
+      - run: pytest tests/unit/ -v --tb=short

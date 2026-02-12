@@ -1,16 +1,33 @@
-"""
-Abstract LLM Provider Interface.
+"""Abstract LLM Provider Interface.
 
 Defines the Protocol that all LLM providers must implement.
 Uses Python's Protocol for structural subtyping (duck typing with type hints).
 
 Classes:
     LLMProvider: Protocol for LLM providers
-
-See MASTER_SPEC.md Section 5.1 for detailed specification.
+    LLMResponse: Structured response including model and usage info
+    TokenUsage: Token count details
 """
 
+from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
+
+
+@dataclass
+class TokenUsage:
+    """Token usage from an API call."""
+
+    input_tokens: int
+    output_tokens: int
+
+
+@dataclass
+class LLMResponse:
+    """Structured LLM response with metadata for cost tracking."""
+
+    content: str
+    model: str
+    usage: TokenUsage
 
 
 @runtime_checkable
@@ -18,13 +35,8 @@ class LLMProvider(Protocol):
     """Abstract interface for LLM providers.
 
     All providers must implement these methods to be compatible with AITestKit.
-
-    Properties:
-        name: Provider identifier (e.g., 'claude', 'openai')
-
-    Methods:
-        generate: Text completion
-        generate_with_attachments: Multimodal generation (images, PDFs)
+    The complete() method returns LLMResponse with model string and token usage
+    so that cost_tracker can log the actual model used.
     """
 
     @property
@@ -32,22 +44,39 @@ class LLMProvider(Protocol):
         """Provider name (e.g., 'claude', 'openai')."""
         ...
 
-    def generate(
+    def complete(
         self,
         prompt: str,
-        model: str,
+        role: str,
+        quality: str = "standard",
         max_tokens: int = 4096,
         temperature: float = 0.0,
-    ) -> str:
-        """Generate text completion."""
+    ) -> LLMResponse:
+        """Generate text completion.
+
+        Args:
+            prompt: The prompt to send
+            role: Model role ("generation", "analysis", "validation")
+            quality: Quality tier ("standard" or "high")
+            max_tokens: Maximum output tokens
+            temperature: Sampling temperature
+
+        Returns:
+            LLMResponse with content, model string, and token usage
+        """
         ...
 
-    def generate_with_attachments(
+    def complete_with_attachments(
         self,
         prompt: str,
-        model: str,
+        role: str,
         attachments: list[dict],
+        quality: str = "standard",
         max_tokens: int = 4096,
-    ) -> str:
+    ) -> LLMResponse:
         """Generate with multimodal input (images, PDFs, etc.)."""
+        ...
+
+    def count_tokens(self, text: str) -> int:
+        """Count tokens in the given text."""
         ...

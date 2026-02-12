@@ -127,4 +127,12 @@ def detect_language(file_path: str | Path) -> str:
     return CODE_EXTENSIONS.get(ext, "text")
 
 
+# New v4.0 fields for scenario YAML
+SCENARIO_V4_FIELDS = {
+    "quality": "standard",       # "standard" (Sonnet) or "high" (Opus)
+    "edge_cases": False,         # Generate edge-case focused tests separately
+    "fault_analysis": False,     # Generate fault-guided tests (ACH pattern)
+}
+
+
 # Placeholder - loader implementation to follow

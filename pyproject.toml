@@ -1,7 +1,7 @@
 [project]
-name = "aitestkit"
-version = "1.0.0"
-description = "AI-Powered Multi-Framework Test Generation Toolkit"
+name = "aitestkit-mcp"
+version = "4.0.0"
+description = "AI-Powered Test Generation MCP Server for IDE Integration"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
@@ -10,8 +10,8 @@ authors = [
 ]
 keywords = [
     "testing", "ai", "automation", "claude", "qa",
-    "test-generation", "pytest", "playwright", "locust",
-    "security-testing", "performance-testing", "bdd"
+    "test-generation", "mcp", "ide-integration",
+    "pytest", "playwright", "robot-framework"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -26,9 +26,7 @@ classifiers = [
 dependencies = [
     # Core
     "anthropic>=0.40.0",
-    "click>=8.1.0",
     "pyyaml>=6.0",
-    "rich>=13.0.0",
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
     "python-dotenv>=1.0.0",
@@ -39,8 +37,23 @@ dependencies = [
     # Retry logic (for API calls)
     "tenacity>=8.2.0",
 
-    # Memvid (semantic memory) - Phase 4
-    # "memvid>=0.1.0",  # TODO: Uncomment when available on PyPI
+    # MCP Server
+    "mcp[cli]",
+
+    # Vector storage
+    "lancedb",
+    "pyarrow",
+
+    # Code analysis
+    "tree-sitter",
+    "tree-sitter-python",
+    "tree-sitter-javascript",
+    "tree-sitter-java",
+    "tree-sitter-c-sharp",
+
+    # Local embeddings
+    "sentence-transformers",
+    "torch",
 ]
 
 [project.optional-dependencies]
@@ -60,7 +73,6 @@ dev = [
 
     # Type stubs
     "types-PyYAML>=6.0.0",
-    "types-click>=7.1.0",
 ]
 
 # Framework validators (optional)
@@ -69,22 +81,14 @@ validators = [
     "gherkin-official>=29.0.0",
 ]
 
-# Sample app dependencies
-sample-app = [
-    "fastapi>=0.109.0",
-    "uvicorn>=0.27.0",
-    "httpx>=0.26.0",
-]
-
 # All optional dependencies
 all = [
-    "aitestkit[dev]",
-    "aitestkit[validators]",
-    "aitestkit[sample-app]",
+    "aitestkit-mcp[dev]",
+    "aitestkit-mcp[validators]",
 ]
 
 [project.scripts]
-aitestkit = "aitestkit.cli:main"
+aitestkit-mcp = "aitestkit.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/sefaertunc/aitestkit"
@@ -104,13 +108,14 @@ aitestkit = [
     "prompts/**/*.md",
     "prompts/**/*.yaml",
     "scenario/templates/*.yaml",
+    "rules/default_rules.json",
 ]
 
 # Ruff configuration
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["src", "tests"]
+src = ["src"]
 
 [tool.ruff.lint]
 select = [
@@ -136,7 +141,7 @@ known-first-party = ["aitestkit"]
 [tool.black]
 line-length = 100
 target-version = ["py311"]
-include = '\\.pyi?$'
+include = '\.pyi?$'
 exclude = '''
 /(
     \.git
@@ -163,12 +168,12 @@ show_error_codes = true
 show_column_numbers = true
 
 [[tool.mypy.overrides]]
-module = ["anthropic.*", "rich.*"]
+module = ["anthropic.*", "lancedb.*", "tree_sitter.*", "sentence_transformers.*", "mcp.*"]
 ignore_missing_imports = true
 
 # Pytest configuration
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = [".dev-tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 python_classes = ["Test*"]
@@ -192,7 +197,7 @@ filterwarnings = [
 source = ["src/aitestkit"]
 branch = true
 omit = [
-    "*/tests/*",
+    "*/.dev-tests/*",
     "*/__init__.py",
 ]
 

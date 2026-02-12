@@ -1,21 +1,27 @@
-"""
-Dual embedding strategy.
+"""Local embedding generation using MiniLM and UniXcoder.
 
-Combines code-search-ada and text-embedding-3-small for
-optimal retrieval of code and natural language content.
+Models (downloaded on first use, cached locally):
+    - Text: sentence-transformers/all-MiniLM-L6-v2 (384 dims, ~80MB)
+    - Code: microsoft/unixcoder-base-nine (768 dims, ~500MB)
 
-Classes:
-- DualEmbedding:
-  - embed_code(code_text) -> vector
-  - embed_text(text) -> vector
-  - embed_combined(code, text) -> vector
+Why dual embedding:
+    Code embedding captures syntax/structure → finds similar framework patterns
+    Text embedding captures intent/domain → finds similar business domains
+    CEDAR combines both scores for retrieval ranking
 
-Strategy:
-- Code content: code-search-ada (optimized for code search)
-- Text content: text-embedding-3-small (general text)
-- Combined: weighted average or concatenation
+No API calls. No cost. Runs on CPU.
 
-TODO: Implement dual embedding
+Dependencies: sentence-transformers, torch (CPU)
 """
 
-# Placeholder - implementation to follow
+
+class EmbeddingGenerator:
+    """Generate embeddings using local models.
+
+    Methods:
+        embed_text(text: str) -> list[float]  # MiniLM, 384 dims
+        embed_code(code: str) -> list[float]  # UniXcoder, 768 dims
+        embed_test(test: ApprovedTest) -> tuple[list[float], list[float]]  # both
+    """
+
+    pass

@@ -2,11 +2,7 @@
 # ============================
 #
 # This file defines a test scenario for AITestKit to generate test code.
-# Fill in the sections below and run:
-#   aitestkit generate -s this_file.yaml -f pytest
-#
-# For validation: aitestkit scenario validate this_file.yaml
-# Documentation: https://aitestkit.dev/docs/scenario-format
+# Ask your IDE agent: "Generate tests from this scenario using pytest"
 #
 # Schema version - do not modify
 schema_version: 1
@@ -96,7 +92,6 @@ test_data:
 # ATTACHMENTS (OPTIONAL)
 # Attach files for richer context during test generation
 # Supported types: image, document, text, code, openapi, url
-# See: aitestkit info --attachments for full list of supported extensions
 # =============================================================================
 # attachments:
 #   # Source code to generate tests for
@@ -125,8 +120,16 @@ test_data:
 #     description: REST API specification
 
 # =============================================================================
+# GENERATION OPTIONS (OPTIONAL)
+# Override project defaults for this scenario
+# =============================================================================
+# quality: "standard"         # "standard" (Sonnet) or "high" (Opus)
+# edge_cases: false           # Generate edge-case focused tests separately
+# fault_analysis: false       # Generate fault-guided tests (ACH pattern)
+
+# =============================================================================
 # OVERRIDES (OPTIONAL)
 # Override project defaults for this specific scenario
 # =============================================================================
-# framework: pytest  # Default from project.yaml
-# output: tests/specific/test_feature.py  # Default from project.yaml
+# framework: pytest  # Default from config.yaml
+# output: tests/specific/test_feature.py  # Default from config.yaml

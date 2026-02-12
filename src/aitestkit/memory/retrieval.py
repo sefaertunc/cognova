@@ -1,23 +1,33 @@
-"""
-CEDAR-style context-aware dynamic example retrieval.
+"""CEDAR retrieval — Context-aware Example Dynamic Adaptive Retrieval.
 
-Retrieves the most relevant few-shot examples based on
-scenario similarity and framework context.
+Given a new test scenario, find the most relevant approved tests as few-shot examples.
 
-Classes:
-- CEDARRetrieval:
-  - __init__(memvid_store)
-  - get_examples(scenario, framework, count) -> list[Example]
-  - update_relevance(example_id, feedback)
+CEDAR scoring:
+    score = (w_code * code_similarity) + (w_text * text_similarity)
+    Default weights: w_code = 0.6, w_text = 0.4
 
-Algorithm:
-1. Embed current scenario
-2. Search Memvid for similar approved generations
-3. Filter by framework
-4. Rank by similarity and approval status
-5. Return top N examples
+Process:
+    1. Embed scenario text (MiniLM) and target code (UniXcoder)
+    2. Search LanceDB for top-K by each embedding type
+    3. Combine scores using CEDAR weighting
+    4. Filter: exclude healed (not re-approved) tests
+    5. Return top 1-2 examples for few-shot injection
 
-TODO: Implement CEDAR retrieval
+Negative examples (rejected tests) are NOT used for few-shot.
+Rejection data → MAPS rule analysis instead.
 """
 
-# Placeholder - implementation to follow
+
+class CEDARRetriever:
+    """Retrieve few-shot examples via CEDAR scoring.
+
+    Methods:
+        retrieve(
+            scenario_text: str,
+            target_code: str,
+            framework: str,
+            top_k: int = 2
+        ) -> list[FewShotExample]
+    """
+
+    pass
