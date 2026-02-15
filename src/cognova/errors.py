@@ -1,34 +1,86 @@
-"""
-Cognova Error Definitions.
+from __future__ import annotations
 
-This module defines the exception hierarchy used throughout Cognova.
-All exceptions inherit from CognovaError and include exit codes for CLI usage.
+from pathlib import Path
 
-Error Categories (see MASTER_SPEC.md Section 6):
-- CognovaError (base, exit_code=1)
-- UserInputError (exit_code=2)
-  - ScenarioValidationError
-  - ScenarioNotFoundError
-  - InvalidYAMLError
-  - SchemaVersionError
-- APIError (exit_code=3)
-  - APIAuthError
-  - APIRateLimitError
-  - APITimeoutError
-  - APIConnectionError
-- GenerationError (exit_code=4)
-  - EmptyResponseError
-  - OutputParseError
-  - PromptTemplateError
-- StorageError (exit_code=5)
-  - MemvidError
-  - FeedbackStorageError
-  - HistoryStorageError
-- ConfigurationError (exit_code=6)
-  - ProjectNotInitializedError
-  - ProjectConfigError
+__all__ = [
+    "CognovaError",
+    "UserInputError",
+    "ScenarioValidationError",
+    "APIError",
+    "APIAuthError",
+    "APIRateLimitError",
+    "APITimeoutError",
+    "GenerationError",
+    "EmptyResponseError",
+    "StorageError",
+    "LanceDBError",
+]
 
-TODO: Implement error classes
-"""
 
-# Placeholder - implementation to follow
+class CognovaError(Exception):
+    """Base exception for all Cognova errors."""
+
+    exit_code: int = 1
+
+    def __init__(self, message: str = "") -> None:
+        self.message = message
+        super().__init__(message)
+
+
+class UserInputError(CognovaError):
+    """User provided invalid input."""
+
+    exit_code = 2
+
+
+class ScenarioValidationError(UserInputError):
+    """Scenario YAML failed validation."""
+
+    def __init__(self, file: Path, errors: list[str]) -> None:
+        self.file = file
+        self.errors = errors
+        super().__init__(f"Scenario validation failed: {file} ({len(errors)} errors)")
+
+
+class APIError(CognovaError):
+    """Claude API call failed."""
+
+    exit_code = 3
+
+
+class APIAuthError(APIError):
+    """Invalid or missing API key."""
+
+
+class APIRateLimitError(APIError):
+    """Rate limit exceeded."""
+
+    def __init__(self, message: str = "Rate limit exceeded", *, retry_after: int = 0) -> None:
+        self.retry_after = retry_after
+        if retry_after:
+            message = f"{message} (retry after {retry_after}s)"
+        super().__init__(message)
+
+
+class APITimeoutError(APIError):
+    """Request timed out."""
+
+
+class GenerationError(CognovaError):
+    """Code generation failed."""
+
+    exit_code = 4
+
+
+class EmptyResponseError(GenerationError):
+    """AI returned empty or unparseable response."""
+
+
+class StorageError(CognovaError):
+    """Storage operation failed."""
+
+    exit_code = 5
+
+
+class LanceDBError(StorageError):
+    """LanceDB database error."""
