@@ -11,12 +11,12 @@ Tiers:
 See MASTER_SPEC.md Section 5.3 for detailed specification.
 """
 
-from typing import Type
+from cognova.errors import ProviderNotFoundError
 
-_PROVIDERS: dict[str, Type] = {}
+_PROVIDERS: dict[str, type] = {}
 
 _PROVIDER_TIERS: dict[str, int] = {
-    "claude": 1,  # Tier 1: Recommended
+    "claude": 1,
 }
 
 
@@ -24,11 +24,11 @@ def get_provider(name: str = "claude"):
     """Get provider instance by name."""
     if name not in _PROVIDERS:
         available = list(_PROVIDERS.keys())
-        raise ValueError(f"Unknown provider: {name}. Available: {available}")
+        raise ProviderNotFoundError(f"Unknown provider: {name}. Available: {available}")
     return _PROVIDERS[name]()
 
 
-def register_provider(name: str, provider_class: Type, tier: int = 3) -> None:
+def register_provider(name: str, provider_class: type, tier: int = 3) -> None:
     """Register a new provider."""
     _PROVIDERS[name] = provider_class
     _PROVIDER_TIERS[name] = tier

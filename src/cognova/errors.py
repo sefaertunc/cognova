@@ -14,6 +14,7 @@ __all__ = [
     "EmptyResponseError",
     "StorageError",
     "LanceDBError",
+    "ProviderNotFoundError"
 ]
 
 
@@ -84,3 +85,9 @@ class StorageError(CognovaError):
 
 class LanceDBError(StorageError):
     """LanceDB database error."""
+
+
+class ProviderNotFoundError(CognovaError):
+    """Missing or unknown provider error."""
+
+    exit_code = 6
