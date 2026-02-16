@@ -20,7 +20,7 @@ _PROVIDER_TIERS: dict[str, int] = {
 }
 
 
-def get_provider(name: str = "claude"):
+def get_provider(name: str = "claude") -> object:
     """Get provider instance by name."""
     if name not in _PROVIDERS:
         available = list(_PROVIDERS.keys())

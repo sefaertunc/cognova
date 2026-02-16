@@ -1,6 +1,6 @@
+import functools
 from pathlib import Path
 from typing import Literal
-import functools
 
 import yaml
 from pydantic import BaseModel, Field
@@ -24,10 +24,10 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
 
-@functools.lru_cache()
+@functools.lru_cache
 def get_settings() -> Settings:
     """Get cached settings instance."""
-    return Settings()
+    return Settings()  # type: ignore[call-arg]
 
 
 class QualityTierConfig(BaseModel):

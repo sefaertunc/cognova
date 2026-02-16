@@ -11,6 +11,8 @@ Classes:
     ClaudeProvider: Claude implementation of LLMProvider
 """
 
+from typing import Any
+
 from cognova.providers.base import LLMResponse
 
 
@@ -46,7 +48,7 @@ class ClaudeProvider:
         self,
         prompt: str,
         role: str,
-        attachments: list[dict],
+        attachments: list[dict[str, Any]],
         quality: str = "standard",
         max_tokens: int = 4096,
     ) -> LLMResponse:

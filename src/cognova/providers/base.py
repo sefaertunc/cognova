@@ -10,7 +10,7 @@ Classes:
 """
 
 from dataclasses import dataclass
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 
 @dataclass
@@ -70,7 +70,7 @@ class LLMProvider(Protocol):
         self,
         prompt: str,
         role: str,
-        attachments: list[dict],
+        attachments: list[dict[str, Any]],
         quality: str = "standard",
         max_tokens: int = 4096,
     ) -> LLMResponse:

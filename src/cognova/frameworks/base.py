@@ -7,7 +7,6 @@ but this module is reserved for future extensions.
 """
 
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 
 class FrameworkAdapter(ABC):
