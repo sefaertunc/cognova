@@ -24,10 +24,10 @@ Example Usage:
 """
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 
-class FrameworkCategory(str, Enum):
+class FrameworkCategory(StrEnum):
     """Testing framework categories."""
 
     UNIT = "unit"

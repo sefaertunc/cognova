@@ -109,7 +109,7 @@ src/cognova/
 - Line length: 100 (ruff, black)
 - Type hints required (mypy strict)
 - All source files are placeholders until implemented
-- Tests in .dev-tests/ (unit/, integration/, manual/) — gitignored, local only
+- Tests in .dev-tests/ (unit/, integration/, manual/)
 - ANTHROPIC_API_KEY is the only required env var
 - No Docker, no CLI, no wrapper scripts
 - MCP server is the only entry point
@@ -144,17 +144,11 @@ src/cognova/
 ## Testing
 
 ```bash
-# Development tests (local, real API key, gitignored)
+# Run all tests
 pytest .dev-tests/ -v
-
-# Official test suite (CI, mocked)
-pytest tests/unit/ -v
 ```
 
-**Convention:** Develop tests in `.dev-tests/` first. Promote stable tests to `tests/` when ready for CI. Never create test files directly in `tests/`.
-
-**Hidden dev directories (all gitignored):**
-- `.dev-tests/` — Working development tests
+**Hidden dev directories (gitignored):**
 - `.dev-docs/` — Working documentation
 - `.dev-memory/` — Development notes and context
 
