@@ -87,6 +87,53 @@ def has_real_api_key():
     """Check if real API key is available."""
     return bool(os.getenv("ANTHROPIC_API_KEY"))
 
+@pytest.fixture
+def mock_settings(monkeypatch):
+    """Provide Settings with fake API key, clearing lru_cache."""
+    from cognova.config import get_settings
+    get_settings.cache_clear()
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-12345")
+    settings = get_settings()
+    yield settings
+    get_settings.cache_clear()
+
+
+@pytest.fixture
+def mock_config():
+    """Provide default ProjectConfig for tests."""
+    from cognova.config import ProjectConfig
+    return ProjectConfig()
+
+
+@pytest.fixture
+def mock_anthropic_client(mocker):
+    """Patch anthropic.Anthropic and return a mock client with realistic response."""
+    from unittest.mock import MagicMock
+
+    mock_usage = MagicMock()
+    mock_usage.input_tokens = 100
+    mock_usage.output_tokens = 50
+
+    mock_text_block = MagicMock()
+    mock_text_block.text = "mock response"
+    mock_text_block.type = "text"
+
+    mock_response = MagicMock()
+    mock_response.content = [mock_text_block]
+    mock_response.model = "claude-sonnet-4-5-20250514"
+    mock_response.usage = mock_usage
+
+    mock_client = MagicMock()
+    mock_client.messages.create.return_value = mock_response
+
+    mock_count_result = MagicMock()
+    mock_count_result.input_tokens = 42
+    mock_client.messages.count_tokens.return_value = mock_count_result
+
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+
+    return mock_client
+
 
 def pytest_configure(config):
     """Configure pytest markers."""
