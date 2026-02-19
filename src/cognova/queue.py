@@ -8,4 +8,4 @@ Repair loops retry in-place within the same queue slot.
 Optional JSON persistence at .cognova/queue.json for restart recovery.
 """
 
-__all__ = ["GenerationQueue", "QueueItem", "QueueStatus"]
+__all__: list[str] = []

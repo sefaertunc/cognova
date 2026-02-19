@@ -1,31 +1,21 @@
-"""
-LLM-as-Judge validation logic.
+"""LLM-as-Judge orchestrator.
 
-Uses Claude Haiku to validate generated code quality.
+Builds rubric → formats prompt → calls Haiku → parses response → computes verdict.
+
+Pipeline: build_rubric() → format_prompt() → Haiku API call → parse_response() → compute_verdict()
 
 Classes:
-- JudgmentResult:
-  - passed: bool
-  - issues: list[str]
-  - suggestions: list[str]
-  - confidence: float
+- JudgeResult: Complete evaluation result (verdict, score, criteria, failed_criteria, hard_fails)
+- JudgeValidator: Orchestrator — async evaluate() runs the full pipeline
 
-- LLMJudge:
-  - __init__(claude_client)
-  - validate(code, framework, scenario) -> JudgmentResult
+Verdict logic:
+  PASS: score >= threshold AND zero hard-fail criteria failed
+  WARN: score >= (threshold - buffer) AND zero hard-fail criteria failed
+  FAIL: score < (threshold - buffer) OR any hard-fail criterion failed
 
-Validation criteria:
-- No time.sleep() calls
-- No TODO/FIXME comments
-- No empty test bodies (pass statements)
-- Proper assertions with messages
-- Framework-specific patterns
+Config: judge.pass_threshold (default 70), judge.warn_buffer (default 15)
 
-Used in:
-- --validate flag (Opus → Haiku)
-- --full flag (Sonnet → Opus → Haiku)
-
-TODO: Implement LLM judge
+Related: judge/rubric.py, judge/criteria.py, prompts/templates/judge/evaluate.md
 """
 
-# Placeholder - implementation to follow
+__all__: list[str] = []

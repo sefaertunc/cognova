@@ -1,24 +1,23 @@
 """
-LLM-as-Judge module.
+Rubric-based LLM-as-Judge module.
 
-Uses Claude (Haiku) to validate generated test code quality
-before returning to the user.
+Uses Claude Haiku to evaluate generated test code against a dynamic
+binary checklist. Each criterion is a concrete yes/no question derived
+from scenario YAML, tree-sitter source context, and framework registry.
+
+Components:
+- criteria.py: Criterion dataclass, Category enum, framework criteria registry
+- rubric.py: RubricBuilder — dynamic criteria from inputs
+- validator.py: JudgeValidator — orchestrates build → Haiku → parse → verdict
 
 Exports:
-- LLMJudge: Main validator class
-- validate_code: Validate generated code
-- JudgmentResult: Dataclass for validation results
+- JudgeValidator: Orchestrator class
+- JudgeResult: Complete evaluation result
+- RubricBuilder: Builds criteria list from inputs
+- Criterion, CriterionResult: Data classes
+- Category: Criterion category enum
 
-Validation checks:
-- No hardcoded sleeps (time.sleep)
-- No TODO/FIXME comments
-- No empty test bodies
-- Proper error handling
-- Framework-specific best practices
-
-See MASTER_SPEC.md Phase 7 for implementation timeline.
-
-TODO: Import exports after implementation
+See MASTER_SPEC.md Section 4.6 (F022) for full specification.
 """
 
-# Placeholder - exports to be added after implementation
+__all__: list[str] = []

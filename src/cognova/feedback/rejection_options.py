@@ -7,4 +7,4 @@ and LLM fallback for unmatched or "Other" free-text classification.
 Related: feedback/storage.py, feedback/patterns.py, rules/engine.py
 """
 
-__all__ = ["RejectionOptions", "get_filtered_options", "classify_other"]
+__all__: list[str] = []
