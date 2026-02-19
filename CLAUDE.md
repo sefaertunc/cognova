@@ -1,4 +1,4 @@
-# CLAUDE.md
+# CLAUDE.md — v4.0.3
 
 This file provides guidance to Claude Code when working with code in this repository.
 
