@@ -7,7 +7,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 Cognova is an MCP server for IDE integration that uses Claude API to:
 - **Generate test code** from YAML scenarios (Sonnet 4.5 standard / Opus 4.6 high quality)
 - **Analyze test failures** and suggest fixes (Sonnet 4.5)
-- **Validate generated code** through deterministic rules + LLM-as-Judge (Haiku 4.5)
+- **Validate generated code** through deterministic rules + rubric-based LLM-as-Judge (Haiku 4.5, binary yes/no criteria)
 - **Repair broken tests** with context-aware fix loops (Sonnet/Opus)
 - **Self-heal existing tests** after code changes (suggest mode default)
 
@@ -72,8 +72,10 @@ src/cognova/
 ├── healing/                   # Self-healing
 │   ├── healer.py              # Suggest mode
 │   └── auto_healer.py         # Auto mode (cosmetic only)
-├── judge/                     # LLM-as-Judge (Haiku)
-│   └── validator.py
+├── judge/                     # Rubric-based LLM-as-Judge (Haiku)
+│   ├── validator.py           # Orchestrator: build rubric → Haiku → parse → JudgeResult
+│   ├── rubric.py              # RubricBuilder: criteria from scenario + source + framework
+│   └── criteria.py            # Criterion dataclass, Category enum, framework criteria registry
 ├── analyzer/                  # Failure analysis (Sonnet)
 │   └── analyzer.py            # Pipeline 8 (analyze_failure tool)
 ├── feedback/                  # Feedback storage
