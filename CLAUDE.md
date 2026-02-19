@@ -12,7 +12,7 @@ Cognova is an MCP server for IDE integration that uses Claude API to:
 - **Self-heal existing tests** after code changes (suggest mode default)
 
 Core principle: AI generates, deterministic rules validate, humans approve.
-Learning loop: auto-fix → constraint injection at threshold 2 → MAPS rule induction at threshold 10 (human approved).
+Learning loop: auto-fix (count=1) → constraint injection (count≥3) → MAPS rule induction (count≥10). Human approval required at Tier 3.
 
 **Important:** When working with the user on this project, provide guidance, suggestions, and architectural advice. The user implements code themselves.
 
@@ -78,7 +78,8 @@ src/cognova/
 │   └── analyzer.py            # Pipeline 8 (analyze_failure tool)
 ├── feedback/                  # Feedback storage
 │   ├── storage.py             # LanceDB + JSON
-│   └── patterns.py            # Pattern detection
+│   ├── patterns.py            # Pattern detection
+│   └── rejection_options.py   # Structured rejection options
 ├── memory/                    # Semantic memory
 │   ├── lancedb_store.py       # Vector storage
 │   ├── embeddings.py          # MiniLM + UniXcoder (local)
@@ -92,7 +93,9 @@ src/cognova/
 ├── utils/
 │   ├── cost_tracker.py        # Per-operation cost logging
 │   └── update_checker.py      # PyPI version check
-└── prompts/                   # Templates and benchmarks
+├── prompts/                   # Templates and benchmarks
+├── queue.py                   # Generation queue (sequential gate)
+└── web_server.py              # Web panel server (v4.1 planned, not implemented)
 ```
 
 ## Model Configuration
@@ -113,6 +116,7 @@ src/cognova/
 - ANTHROPIC_API_KEY is the only required env var
 - No Docker, no CLI, no wrapper scripts
 - MCP server is the only entry point
+- v4.1 planned: Local web panel (localhost:8420) as visual companion to IDE MCP
 
 ## Commenting Strategy
 
