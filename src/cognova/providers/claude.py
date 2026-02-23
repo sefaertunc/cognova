@@ -11,9 +11,14 @@ Classes:
     ClaudeProvider: Claude implementation of LLMProvider
 """
 
-from typing import Any
+from typing import Any, cast
 
-from cognova.providers.base import LLMResponse
+import anthropic
+from pydantic_core import ValidationError
+
+from cognova.config import SONNET_MODEL, ProjectConfig, get_settings
+from cognova.errors import APIAuthError, APIRateLimitError, APITimeoutError
+from cognova.providers.base import LLMResponse, TokenUsage
 
 
 class ClaudeProvider:
@@ -27,7 +32,12 @@ class ClaudeProvider:
 
     def __init__(self) -> None:
         """Initialize Claude provider. Requires ANTHROPIC_API_KEY."""
-        raise NotImplementedError("ClaudeProvider.__init__ not implemented")
+        try:
+            self._settings = get_settings()
+        except ValidationError:
+            raise APIAuthError("The API key not found.") from None
+        self._config = ProjectConfig()
+        self._client = anthropic.Anthropic(api_key=self._settings.anthropic_api_key)
 
     def complete(
         self,
@@ -42,7 +52,18 @@ class ClaudeProvider:
         Resolves model from role + quality tier via config.
         Returns LLMResponse with actual model string and token usage.
         """
-        raise NotImplementedError("ClaudeProvider.complete not implemented")
+        model = self._config.get_model_for_role(role=role, quality=quality)
+        try:
+            response = self._client.messages.create(model=model, max_tokens=max_tokens, temperature=temperature, messages=[{"role": "user", "content": prompt}], stream=False)
+        except anthropic.AuthenticationError:
+            raise APIAuthError("API key not authenticated.") from None
+        except anthropic.RateLimitError:
+            raise APIRateLimitError("Rate limit exceeded.") from None
+        except anthropic.APITimeoutError:
+            raise APITimeoutError("Request timed out.") from None
+        text_block = cast(anthropic.types.TextBlock, response.content[0])
+        usage = TokenUsage(input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens)
+        return LLMResponse(content=text_block.text, model=response.model, usage=usage)
 
     def complete_with_attachments(
         self,
@@ -53,8 +74,21 @@ class ClaudeProvider:
         max_tokens: int = 4096,
     ) -> LLMResponse:
         """Generate with multimodal input using Claude's vision capabilities."""
-        raise NotImplementedError("ClaudeProvider.complete_with_attachments not implemented")
+        model = self._config.get_model_for_role(role=role, quality=quality)
+        content_blocks: list[Any] = [*attachments, {"type": "text", "text": prompt}]
+        try:
+            response = self._client.messages.create(model=model, max_tokens=max_tokens, messages=[{"role": "user", "content": content_blocks}], stream=False)
+        except anthropic.AuthenticationError:
+            raise APIAuthError("API key not authenticated.") from None
+        except anthropic.RateLimitError:
+            raise APIRateLimitError("Rate limit exceeded.") from None
+        except anthropic.APITimeoutError:
+            raise APITimeoutError("Request timed out.") from None
+        text_block = cast(anthropic.types.TextBlock, response.content[0])
+        usage = TokenUsage(input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens)
+        return LLMResponse(content=text_block.text, model=response.model, usage=usage)
 
     def count_tokens(self, text: str) -> int:
         """Count tokens using Anthropic's token counting API."""
-        raise NotImplementedError("ClaudeProvider.count_tokens not implemented")
+        result = self._client.messages.count_tokens(model=SONNET_MODEL, messages=[{"role": "user", "content": text}])
+        return result.input_tokens
