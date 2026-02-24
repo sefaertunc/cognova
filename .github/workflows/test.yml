@@ -1,22 +1,23 @@
-# Runs Cognova's own test suite on push/PR
-# Create tests/ from .dev-tests/ before enabling this
 name: Tests
 on:
   push:
-    branches: [main, develop]
+    branches: [develop]
   pull_request:
     branches: [main]
 jobs:
   lint:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.11" }
+        with: { python-version: "3.11", cache: "pip" }
       - run: pip install -e ".[dev]"
       - run: ruff check src/
       - run: mypy src/
+
   test:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,6 +25,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "${{ matrix.python }}" }
+        with: { python-version: "${{ matrix.python }}", cache: "pip" }
       - run: pip install -e ".[dev]"
-      - run: pytest .dev-tests/ -v --tb=short
+      - run: pytest .dev-tests/ -v --tb=short --cov=src/cognova --cov-fail-under=80
+
+  security:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: "pip" }
+      - run: pip install -e ".[dev]" pip-audit
+      - run: pip-audit
+
+  build:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: "pip" }
+      - run: pip install build
+      - run: python -m build
