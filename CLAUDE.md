@@ -1,4 +1,4 @@
-# CLAUDE.md — v4.0.3
+# CLAUDE.md — v4.0.4
 
 This file provides guidance to Claude Code when working with code in this repository.
 
@@ -33,7 +33,8 @@ Learning loop: auto-fix (count=1) → constraint injection (count≥3) → MAPS 
 
 ### Development (local)
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[dev]"        # Core + dev tools (no ML)
+pip install -e ".[dev,ml]"     # Include torch/sentence-transformers
 pytest .dev-tests/ -v
 ruff check src/
 mypy src/
@@ -113,8 +114,8 @@ src/cognova/
 - Python 3.11+
 - Line length: 100 (ruff, black)
 - Type hints required (mypy strict)
-- All source files are placeholders until implemented
-- Tests in .dev-tests/ (unit/, integration/, manual/)
+- Phase 1 complete (F001-F007 + F011). Phase 2+ files are placeholders.
+- Tests in .dev-tests/ (unit/, integration/, manual/) — 233 total
 - ANTHROPIC_API_KEY is the only required env var
 - No Docker, no CLI, no wrapper scripts
 - MCP server is the only entry point
@@ -172,7 +173,18 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 **Types:** feat, fix, docs, style, refactor, test, chore
 
-**Note:** Do not add `Co-Authored-By` lines to commit messages.
+**Note:** Do not add `Co-Authored-By` lines to commit messages. Do not add "Generated with Claude Code" signatures to PRs.
+
+## CI / Branch Strategy
+
+```
+develop → push → lint + test → PR to main → security (pip-audit) + build → merge → tag → release
+```
+
+- **develop branch:** Active development. Push triggers lint (ruff + mypy) and test (pytest, matrix 3.11/3.12).
+- **main branch:** Protected. PRs trigger security audit and build verification.
+- **Branch protection:** Require PR, status checks (security + build), no force push, squash merge only.
+- ML deps (`torch`, `sentence-transformers`) are in optional `[ml]` group — not installed in CI.
 
 ## Project Documentation
 
