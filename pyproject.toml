@@ -1,9 +1,9 @@
 [project]
 name = "cognova-mcp"
-version = "4.0.0"
+version = "1.0.0"
 description = "AI-Powered Test Generation MCP Server for IDE Integration"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.11"
 authors = [
     {name = "Sefa Ertunc", email = "sefaertnc@gmail.com"}
@@ -16,7 +16,6 @@ keywords = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Testing",
@@ -50,10 +49,6 @@ dependencies = [
     "tree-sitter-javascript",
     "tree-sitter-java",
     "tree-sitter-c-sharp",
-
-    # Local embeddings
-    "sentence-transformers",
-    "torch",
 ]
 
 [project.optional-dependencies]
@@ -75,6 +70,12 @@ dev = [
     "types-PyYAML>=6.0.0",
 ]
 
+# Local embeddings (heavy: ~3.9 GB with CUDA)
+ml = [
+    "sentence-transformers",
+    "torch",
+]
+
 # Framework validators (optional)
 validators = [
     "robotframework>=7.0",
@@ -84,6 +85,7 @@ validators = [
 # All optional dependencies
 all = [
     "cognova-mcp[dev]",
+    "cognova-mcp[ml]",
     "cognova-mcp[validators]",
 ]
 
