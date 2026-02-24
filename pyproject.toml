@@ -200,6 +200,21 @@ branch = true
 omit = [
     "*/.dev-tests/*",
     "*/__init__.py",
+    # Placeholder modules (remove as each feature is implemented)
+    "src/cognova/analyzer/*",
+    "src/cognova/context/*",
+    "src/cognova/feedback/*",
+    "src/cognova/generator/*",
+    "src/cognova/healing/*",
+    "src/cognova/judge/*",
+    "src/cognova/memory/*",
+    "src/cognova/queue.py",
+    "src/cognova/regression/*",
+    "src/cognova/repair/*",
+    "src/cognova/rules/*",
+    "src/cognova/scenario/*",
+    "src/cognova/utils/*",
+    "src/cognova/web_server.py",
 ]
 
 [tool.coverage.report]
