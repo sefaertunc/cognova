@@ -35,7 +35,9 @@ Installation (IDE config):
 
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("Cognova")
+from cognova import __version__
+
+mcp = FastMCP("Cognova", instructions=f"Cognova v{__version__}")
 
 
 def main() -> None:
