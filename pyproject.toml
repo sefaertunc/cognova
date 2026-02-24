@@ -49,10 +49,6 @@ dependencies = [
     "tree-sitter-javascript",
     "tree-sitter-java",
     "tree-sitter-c-sharp",
-
-    # Local embeddings
-    "sentence-transformers",
-    "torch",
 ]
 
 [project.optional-dependencies]
@@ -74,6 +70,12 @@ dev = [
     "types-PyYAML>=6.0.0",
 ]
 
+# Local embeddings (heavy: ~3.9 GB with CUDA)
+ml = [
+    "sentence-transformers",
+    "torch",
+]
+
 # Framework validators (optional)
 validators = [
     "robotframework>=7.0",
@@ -83,6 +85,7 @@ validators = [
 # All optional dependencies
 all = [
     "cognova-mcp[dev]",
+    "cognova-mcp[ml]",
     "cognova-mcp[validators]",
 ]
 
