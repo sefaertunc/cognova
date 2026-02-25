@@ -78,7 +78,7 @@ test_data:
 
   # Edge case data
   edge_case_example:
-    field1: "a" * 1000  # Very long string
+    field1: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"  # Very long string
 
 # =============================================================================
 # CONTEXT (OPTIONAL)
