@@ -4,21 +4,20 @@ Scenario YAML loader.
 Loads and parses scenario YAML files into Pydantic models.
 
 Classes:
-- Target: Target system/feature being tested
-- Scenarios: Test scenarios grouped by outcome type
-- ScenarioFile: Complete scenario YAML file structure
-
 Functions:
 - load_scenario(path) -> ScenarioFile: Load and validate scenario file
 - load_scenario_raw(path) -> dict: Load scenario as raw dictionary
 - detect_language(file_path) -> str: Detect programming language from file extension
-
-See MASTER_SPEC.md Section 9.4 for schema details.
-
-TODO: Implement loader classes and functions
 """
 
 from pathlib import Path
+from typing import Any
+
+import yaml
+from pydantic import ValidationError
+
+from cognova.errors import ScenarioLoadError, ScenarioValidationError
+from cognova.scenario.validator import ScenarioFile
 
 # Code file extension to language mapping.
 # Used for:
@@ -126,13 +125,25 @@ def detect_language(file_path: str | Path) -> str:
     ext = Path(file_path).suffix.lower()
     return CODE_EXTENSIONS.get(ext, "text")
 
+def load_scenario_raw(path: Path) -> dict[str, Any]:
+    """Load scenario YAML as raw dictionary."""
+    if not path.exists():
+        raise ScenarioLoadError(path, "File not found")
+    try:
+        with open(path) as d:
+            data = yaml.safe_load(d)
+    except yaml.YAMLError as e:
+        raise ScenarioLoadError(path, f"Invalid YAML: {e}") from e
+    if not isinstance(data, dict):
+        raise ScenarioLoadError(path, "Scenario must be a YAML mapping, not a scalar or list")
+    return data
 
-# New v4.0 fields for scenario YAML
-SCENARIO_V4_FIELDS = {
-    "quality": "standard",       # "standard" (Sonnet) or "high" (Opus)
-    "edge_cases": False,         # Generate edge-case focused tests separately
-    "fault_analysis": False,     # Generate fault-guided tests (ACH pattern)
-}
 
-
-# Placeholder - loader implementation to follow
+def load_scenario(path: Path) -> ScenarioFile:
+    """Load and validate scenario YAML into Pydantic model."""
+    data = load_scenario_raw(path)
+    try:
+        return ScenarioFile(**data)
+    except ValidationError as e:
+        errors = [err["msg"] for err in e.errors()]
+        raise ScenarioValidationError(path, errors) from e

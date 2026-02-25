@@ -14,7 +14,8 @@ __all__ = [
     "EmptyResponseError",
     "StorageError",
     "LanceDBError",
-    "ProviderNotFoundError"
+    "ProviderNotFoundError",
+    "ScenarioLoadError"
 ]
 
 
@@ -41,6 +42,14 @@ class ScenarioValidationError(UserInputError):
         self.file = file
         self.errors = errors
         super().__init__(f"Scenario validation failed: {file} ({len(errors)} errors)")
+
+
+class ScenarioLoadError(UserInputError):
+    """Scenario YAML file does not exist in defined path"""
+    def __init__(self, file: Path, reason: str) -> None:
+        self.file = file
+        self.reason = reason
+        super().__init__(f"Cannot load scenario: {file} ({reason})")
 
 
 class APIError(CognovaError):
