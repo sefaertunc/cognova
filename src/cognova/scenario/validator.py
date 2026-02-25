@@ -1,6 +1,6 @@
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TargetConfig(BaseModel):
@@ -17,9 +17,16 @@ class ScenariosConfig(BaseModel):
 
 
 class ScenarioFile(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     schema_version: int = 1
     target: TargetConfig
     scenarios: ScenariosConfig
+    quality: Literal["standard", "high"] = "standard"
+    edge_cases_enabled: bool = Field(default=False, alias="edge_cases")
+    fault_analysis: bool = False
+    framework: str | None = None
     test_data: dict[str, Any] | None = None
     context: list[str] | None = None
     attachments: list[dict[str, Any]] | None = None
+    output: str | None = None

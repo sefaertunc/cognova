@@ -137,7 +137,7 @@ def test_catchability(raise_cls, catch_cls):
 
 
 def test_all_exports_count():
-    assert len(__all__) == 12
+    assert len(__all__) == 13
 
 
 def test_no_builtin_memory_error_shadow():
