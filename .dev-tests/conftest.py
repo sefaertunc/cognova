@@ -135,6 +135,91 @@ def mock_anthropic_client(mocker):
     return mock_client
 
 
+FULL_SCENARIO = """\
+schema_version: 1
+target:
+  feature: "sample feature"
+  component: "auth"
+  description: "sample description above 20 chars"
+  source_files:
+    - sample.py
+    - sample2.py
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+  edge_cases:
+    - "sample"
+    - "sample2"
+test_data:
+  valid_example:
+    field1: "valid_value"
+context:
+  - docs/sample.py
+framework: "pytest"
+attachments:
+  - path: src/sample.py
+"""
+
+VALID_SCENARIO = """\
+schema_version: 1
+target:
+  feature: "sample feature"
+  description: "sample description above 20 chars"
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+VALID_SCENARIO_NEW_VERSION = """\
+schema_version: 2
+target:
+  feature: "sample feature"
+  description: "sample description above 20 chars"
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+INVALID_SCENARIO_DESCRIPTION = """\
+schema_version: 1
+target:
+  feature: "sample feature"
+  description: "sample"
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+INVALID_SCENARIO_TARGET = """\
+schema_version: 1
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+INVALID_SCENARIO_EMPTY = """schema_version: 1"""
+
+
 def pytest_configure(config):
     """Configure pytest markers."""
     config.addinivalue_line(
