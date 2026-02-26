@@ -9,7 +9,9 @@ from cognova.providers.base import (
 )
 
 import sys
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 
 class MockProvider:
     """Minimal class that satisfies LLMProvider protocol."""
@@ -48,6 +50,7 @@ def mock_provider_class():
 def clean_registry():
     """Reset provider registry between tests."""
     from cognova.providers import registry
+
     original_providers = dict(registry._PROVIDERS)
     original_tiers = dict(registry._PROVIDER_TIERS)
     registry._PROVIDERS.clear()
@@ -59,6 +62,7 @@ def clean_registry():
     registry._PROVIDER_TIERS.clear()
     registry._PROVIDER_TIERS.update(original_tiers)
 
+
 @pytest.fixture
 def project_root():
     """Get project root directory."""
@@ -69,10 +73,12 @@ def project_root():
 def temp_env_file(tmp_path):
     """Create temporary .env file for testing."""
     env_file = tmp_path / ".env"
-    env_file.write_text("""
+    env_file.write_text(
+        """
 ANTHROPIC_API_KEY=test-key-12345
 COGNOVA_QUALITY_TIER=standard
-""".strip())
+""".strip()
+    )
     return env_file
 
 
@@ -87,10 +93,12 @@ def has_real_api_key():
     """Check if real API key is available."""
     return bool(os.getenv("ANTHROPIC_API_KEY"))
 
+
 @pytest.fixture
 def mock_settings(monkeypatch):
     """Provide Settings with fake API key, clearing lru_cache."""
     from cognova.config import get_settings
+
     get_settings.cache_clear()
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-12345")
     settings = get_settings()
@@ -102,6 +110,7 @@ def mock_settings(monkeypatch):
 def mock_config():
     """Provide default ProjectConfig for tests."""
     from cognova.config import ProjectConfig
+
     return ProjectConfig()
 
 
@@ -135,11 +144,92 @@ def mock_anthropic_client(mocker):
     return mock_client
 
 
+FULL_SCENARIO = """\
+schema_version: 1
+target:
+  feature: "sample feature"
+  component: "auth"
+  description: "sample description above 20 chars"
+  source_files:
+    - sample.py
+    - sample2.py
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+  edge_cases:
+    - "sample"
+    - "sample2"
+test_data:
+  valid_example:
+    field1: "valid_value"
+context:
+  - docs/sample.py
+framework: "pytest"
+attachments:
+  - path: src/sample.py
+"""
+
+VALID_SCENARIO = """\
+schema_version: 1
+target:
+  feature: "sample feature"
+  description: "sample description above 20 chars"
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+VALID_SCENARIO_NEW_VERSION = """\
+schema_version: 2
+target:
+  feature: "sample feature"
+  description: "sample description above 20 chars"
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+INVALID_SCENARIO_DESCRIPTION = """\
+schema_version: 1
+target:
+  feature: "sample feature"
+  description: "sample"
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+INVALID_SCENARIO_TARGET = """\
+schema_version: 1
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+"""
+
+INVALID_SCENARIO_EMPTY = """schema_version: 1"""
+
+
 def pytest_configure(config):
     """Configure pytest markers."""
-    config.addinivalue_line(
-        "markers", "requires_api: mark test as requiring real API key"
-    )
-    config.addinivalue_line(
-        "markers", "slow: mark test as slow running"
-    )
+    config.addinivalue_line("markers", "requires_api: mark test as requiring real API key")
+    config.addinivalue_line("markers", "slow: mark test as slow running")
