@@ -47,10 +47,10 @@ def test_check_schema_version_deprecated(monkeypatch):
 
 
 def test_migrate_v0_to_v1(monkeypatch):
-     monkeypatch.setattr("cognova.scenario.migrator.CURRENT_SCHEMA_VERSION", 2)
-     data, changes = migrate_v0_to_v1({})
-     assert data["schema_version"] == 2
-     assert len(changes) == 1
+    monkeypatch.setattr("cognova.scenario.migrator.CURRENT_SCHEMA_VERSION", 2)
+    data, changes = migrate_v0_to_v1({})
+    assert data["schema_version"] == 2
+    assert len(changes) == 1
 
 
 def test_migrate_v0_to_v1_already_has_version():
