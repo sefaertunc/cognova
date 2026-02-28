@@ -1,7 +1,12 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:
+    from cognova.scenario.loader import Attachment
 
 
 class TargetConfig(BaseModel):
@@ -29,7 +34,7 @@ class ScenarioFile(BaseModel):
     framework: str | None = None
     test_data: dict[str, Any] | None = None
     context: list[str] | None = None
-    attachments: list[dict[str, Any]] | None = None
+    attachments: list[Attachment] | None = None
     output: str | None = None
 
 
