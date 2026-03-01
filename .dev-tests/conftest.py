@@ -187,6 +187,23 @@ scenarios:
     - "sample2"
 """
 
+VALID_SCENARIO_URL = """\
+schema_version: 1
+target:
+  feature: "sample feature"
+  description: "sample description above 20 chars"
+scenarios:
+  success:
+    - "sample"
+    - "sample2"
+  failure:
+    - "sample"
+    - "sample2"
+attachments:
+  - path: https://example.com/api-docs
+    type: url
+"""
+
 VALID_SCENARIO_NEW_VERSION = """\
 schema_version: 2
 target:

@@ -11,10 +11,10 @@ Functions:
 """
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError, model_validator
 
 from cognova.errors import ScenarioLoadError, ScenarioValidationError
 from cognova.scenario.validator import ScenarioFile
@@ -111,6 +111,11 @@ CODE_EXTENSIONS: dict[str, str] = {
     ".cr": "crystal",
 }
 
+ATTACHMENT_TYPE_MAP: dict[str, list[str]] = {
+    "image": [".png", ".jpg", ".jpeg", ".gif", ".webp"],
+    "document": [".pdf"],
+    "openapi": [".yaml", ".yml", ".json"],
+}
 
 def detect_language(file_path: str | Path) -> str:
     """Detect programming language from file extension.
@@ -124,6 +129,38 @@ def detect_language(file_path: str | Path) -> str:
     """
     ext = Path(file_path).suffix.lower()
     return CODE_EXTENSIONS.get(ext, "text")
+
+
+def detect_attachment_type(file_path: str | Path) -> str:
+    """Detect attachment type from file extension.
+
+    Returns:
+        Attachment type: image, document, openapi, code, or text (fallback)
+    """
+    ext = Path(file_path).suffix.lower()
+    for file_type, extensions in ATTACHMENT_TYPE_MAP.items():
+        if ext in extensions:
+            return file_type
+    if ext in CODE_EXTENSIONS:
+        return "code"
+    return "text"
+
+
+class Attachment(BaseModel):
+    path: str
+    type: Literal["image", "document", "code", "text", "openapi", "url"] = "text"
+    description: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def auto_detect_type(cls, data: Any) -> Any:
+        if isinstance(data, dict) and "path" in data and "type" not in data:
+            data["type"] = detect_attachment_type(data["path"])
+        return data
+
+# Resolve forward reference: ScenarioFile.attachments uses "Attachment" string annotation
+ScenarioFile.model_rebuild()
+
 
 def load_scenario_raw(path: Path) -> dict[str, Any]:
     """Load scenario YAML as raw dictionary."""
@@ -143,7 +180,18 @@ def load_scenario(path: Path) -> ScenarioFile:
     """Load and validate scenario YAML into Pydantic model."""
     data = load_scenario_raw(path)
     try:
-        return ScenarioFile(**data)
+        scenario = ScenarioFile(**data)
     except ValidationError as e:
         errors = [err["msg"] for err in e.errors()]
         raise ScenarioValidationError(path, errors) from e
+
+    if scenario.attachments:
+        missing = [
+            att.path
+            for att in scenario.attachments
+            if att.type != "url" and not (path.parent / att.path).exists()
+        ]
+        if missing:
+            raise ScenarioLoadError(path, f"Attachments not found: {', '.join(missing)}")
+
+    return scenario
