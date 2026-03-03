@@ -62,7 +62,6 @@ dev = [
 
     # Code quality
     "ruff>=0.15.0",
-    "black>=24.0.0",
     "mypy>=1.0.0",
     "pre-commit>=3.6.0",
 
@@ -138,20 +137,6 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["cognova"]
-
-# Black configuration
-[tool.black]
-line-length = 100
-target-version = ["py311"]
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-    | \.venv
-    | build
-    | dist
-)/
-'''
 
 # MyPy configuration
 [tool.mypy]

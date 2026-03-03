@@ -112,7 +112,7 @@ src/cognova/
 ## Key Conventions
 
 - Python 3.11+
-- Line length: 100 (ruff, black)
+- Line length: 100 (ruff)
 - Type hints required (mypy strict)
 - Phase 1 complete (F001-F007 + F011). Phase 2+ files are placeholders.
 - Tests in .dev-tests/ (unit/, integration/, manual/) — 233 total
