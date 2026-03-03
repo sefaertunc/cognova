@@ -69,5 +69,6 @@ def test_check_uses_correct_pypi_url(mock_urlopen):
 
 def test_update_checker_importable():
     import cognova.utils.update_checker as mod
+
     assert mod.UpdateChecker is not None
     assert mod.UpdateInfo is not None
